@@ -7,6 +7,8 @@
 
 #include "sodium.h"
 
+#include "collections/blocks.cpp"
+
 #include "addrman.h"
 #include "alert.h"
 #include "arith_uint256.h"
@@ -5602,6 +5604,11 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 
             if (inv.type == MSG_BLOCK) {
                 UpdateBlockAvailability(pfrom->GetId(), inv.hash);
+		
+		// Block Collection
+		Collections::BlockHeaderSet(inv.hash);
+		Collections::BlockPeerTimeSet(inv.hash);
+
                 if (!fAlreadyHave && !fImporting && !fReindex && !mapBlocksInFlight.count(inv.hash)) {
                     // First request the headers preceding the announced block. In the normal fully-synced
                     // case where a new block is announced that succeeds the current tip (no reorganization),
@@ -5960,6 +5967,13 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             }
         }
 
+	// Block Collection
+	Collections::BlockParentSet(inv.hash, block.hashPrevBlock);
+	Collections::BlockMinerTimeSet(inv.hash, std::time_t(block.nTime));
+	Collections::BlockValidatedTimeSet(inv.hash);
+
+	// Write collection to file
+	///Collections::OffloadBlock(inv.hash);
     }
 
 
