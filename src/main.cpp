@@ -5606,7 +5606,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
                 UpdateBlockAvailability(pfrom->GetId(), inv.hash);
 
                 //-- PEER BLOCK COLLECTION --//
-                //--      TODO       --//
+                Collections::PeerBlockSeen(inv.hash, pfrom->addr.ToStringIP());
 		
                 if (!fAlreadyHave && !fImporting && !fReindex && !mapBlocksInFlight.count(inv.hash)) {
                     // First request the headers preceding the announced block. In the normal fully-synced
@@ -5645,8 +5645,9 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
     }
 
 
+    // Turn off data propigation
     else if (strCommand == "getdata")
-    {
+    {/*
         vector<CInv> vInv;
         vRecv >> vInv;
         if (vInv.size() > MAX_INV_SZ)
@@ -5663,11 +5664,12 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
 
         pfrom->vRecvGetData.insert(pfrom->vRecvGetData.end(), vInv.begin(), vInv.end());
         ProcessGetData(pfrom, chainparams.GetConsensus());
-    }
+    */}
 
 
+    // Turn off block propigation
     else if (strCommand == "getblocks")
-    {
+    {/*
         CBlockLocator locator;
         uint256 hashStop;
         vRecv >> locator >> hashStop;
@@ -5707,11 +5709,12 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
                 break;
             }
         }
-    }
+   */}
 
 
+    // Turn off header propigation
     else if (strCommand == "getheaders")
-    {
+    {/*
         CBlockLocator locator;
         uint256 hashStop;
         vRecv >> locator >> hashStop;
@@ -5749,7 +5752,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
                 break;
         }
         pfrom->PushMessage("headers", vHeaders);
-    }
+    */}
 
 
     else if (strCommand == "tx")
