@@ -54,6 +54,15 @@ namespace Collections {
     // Check for Fork
     BlockNumChildren[parent_hash] += 1;
     if (BlockNumChildren[parent_hash] > 1) {
+      block_file = fopen(file_path.c_str(), "a");
+      if (block_file != NULL) {
+        fprintf(block_file, "FORK\n");
+        fclose(block_file);
+      } else {
+        // TODO better error handler here
+        std::cout << "ERROR: could not open block file - " << file_path << "\n";
+      }
+
       std::cout<<"ALERT: FORK!\n";
     }
   }
