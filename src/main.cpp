@@ -5977,7 +5977,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         }
 
         //-- BLOCK COLLECTION --//
-        Collections::BlockAdd(inv.hash, block.hashPrevBlock, std::time_t(block.nTime), block.nBits, block.vtx);
+        Collections::BlockAdd(inv.hash, &block);
     }
 
 

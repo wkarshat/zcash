@@ -23,28 +23,29 @@ namespace Collections {
   }
 
   // main.cpp:5973
-  void BlockAdd(uint256 hash, uint256 parent_hash, std::time_t miner_time, uint32_t miner_dif, std::vector<CTransaction> vtx) {
+  void BlockAdd(uint256 hash, CBlock* block) {
+
     timestamp_t validated_time = CurrentTimeMilli();
 
     //-- Fork Decection --//
     static uint256 last_block_hash;
     bool is_fork = false;
-    if (last_block_hash.IsNull() || last_block_hash == parent_hash) {
+    if (last_block_hash.IsNull() || last_block_hash == block->hashPrevBlock) {
       last_block_hash = hash;
     } else {
       // FORK
       is_fork = true;
       last_block_hash.SetNull();
     }
+
+    //-- Decode miner difficulty --//
+    arith_uint256 bnTarget;
+    bnTarget.SetCompact(block->nBits);
     
     //-- Offload data to file --//
 		std::string file_path = LOG_PATH_BLOCKS + hash.ToString() + ".log";
 		FILE *block_file = fopen(file_path.c_str(), "w+");
     if (block_file != NULL) {
-
-      // Decode miner difficulty
-      arith_uint256 bnTarget;
-      bnTarget.SetCompact(miner_dif);
 
       // Header
       const char* block_format =
@@ -55,8 +56,8 @@ namespace Collections {
         "Valid Time:\t%llu\n";
       fprintf(block_file, block_format,
         hash.ToString().c_str(),
-        parent_hash.ToString().c_str(),
-        miner_time,
+        block->hashPrevBlock.ToString().c_str(),
+        std::time_t(block->nTime),
         bnTarget.ToString().c_str(),
         validated_time);
       
@@ -68,8 +69,9 @@ namespace Collections {
       // Transactions
       fprintf(block_file, "Transactions:\n");
       const char* tx_format = "\t%d:\t%s\n";
-      for (int i = 0; i < vtx.size(); i ++) {
-        fprintf(block_file, tx_format, i, vtx[i].GetHash().ToString().c_str());
+      int vtx_len = block->vtx.size();
+      for (int i = 0; i < vtx_len; i ++) {
+        fprintf(block_file, tx_format, i, block->vtx[i].GetHash().ToString().c_str());
       }
 
       fclose(block_file);
