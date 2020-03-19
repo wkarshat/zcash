@@ -23,7 +23,7 @@ namespace Collections {
   }
 
   // main.cpp:5973
-  void BlockAdd(uint256 hash, uint256 parent_hash, std::time_t miner_time, std::vector<CTransaction> vtx) {
+  void BlockAdd(uint256 hash, uint256 parent_hash, std::time_t miner_time, uint32_t miner_dif, std::vector<CTransaction> vtx) {
     timestamp_t validated_time = CurrentTimeMilli();
 
     //-- Fork Decection --//
@@ -42,16 +42,22 @@ namespace Collections {
 		FILE *block_file = fopen(file_path.c_str(), "w+");
     if (block_file != NULL) {
 
+      // Decode miner difficulty
+      arith_uint256 bnTarget;
+      bnTarget.SetCompact(miner_dif);
+
       // Header
       const char* block_format =
         "Block Hash:\t%s\n"
         "Parent Hash:\t%s\n"
         "Miner Time:\t%d\n"
+        "Miner Target:\t%s\n"
         "Valid Time:\t%llu\n";
       fprintf(block_file, block_format,
         hash.ToString().c_str(),
         parent_hash.ToString().c_str(),
         miner_time,
+        bnTarget.ToString().c_str(),
         validated_time);
       
       // Fork
