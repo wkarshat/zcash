@@ -82,7 +82,8 @@ namespace Collections {
   }
 
   // main.cpp:5609
-  void PeerBlockSeen(uint256 hash, std::string node_ip) {
+  // Blocks and Transactions
+  void PeerInvSeen(uint256 hash, std::string node_ip) {
     //-- Timestamp --//
     timestamp_t seen_time = CurrentTimeMilli();
 
