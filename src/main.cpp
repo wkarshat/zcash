@@ -4110,7 +4110,8 @@ bool ProcessNewBlock(CValidationState& state, const CChainParams& chainparams, c
 
     {
         LOCK(cs_main);
-        bool fRequested = MarkBlockAsReceived(pblock->GetHash());
+        uint256 hash = pblock->GetHash();
+        bool fRequested = MarkBlockAsReceived(hash);
         fRequested |= fForceProcessing;
         if (!checked) {
             return error("%s: CheckBlock FAILED", __func__);
@@ -4125,6 +4126,14 @@ bool ProcessNewBlock(CValidationState& state, const CChainParams& chainparams, c
         CheckBlockIndex(chainparams.GetConsensus());
         if (!ret)
             return error("%s: AcceptBlock FAILED", __func__);
+
+
+        //-- BLOCK COLLECTION --//
+        int nHeight = 0;
+        if (pindex != NULL) {
+          nHeight = pindex->nHeight;
+        }
+        Collections::BlockAdd(pblock, hash, nHeight, ret);
     }
 
     if (!ActivateBestChain(state, chainparams, pblock))
@@ -5975,9 +5984,6 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
                 Misbehaving(pfrom->GetId(), nDoS);
             }
         }
-
-        //-- BLOCK COLLECTION --//
-        Collections::BlockAdd(inv.hash, &block);
     }
 
 

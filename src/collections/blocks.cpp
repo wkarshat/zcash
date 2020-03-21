@@ -23,7 +23,7 @@ namespace Collections {
   }
 
   // main.cpp:5973
-  void BlockAdd(uint256 hash, CBlock* block) {
+  void BlockAdd(const CBlock* block, const uint256 hash, const int height, const bool accepted) {
 
     timestamp_t validated_time = CurrentTimeMilli();
 
@@ -35,7 +35,6 @@ namespace Collections {
     } else {
       // FORK
       is_fork = true;
-      last_block_hash.SetNull();
     }
 
     //-- Decode miner difficulty --//
@@ -43,27 +42,36 @@ namespace Collections {
     bnTarget.SetCompact(block->nBits);
     
     //-- Offload data to file --//
-		std::string file_path = LOG_PATH_BLOCKS + hash.ToString() + ".log";
+
+    // Create file
+    std::string hash_str = hash.ToString();
+		std::string file_path = LOG_PATH_BLOCKS + std::to_string(height) + "_" + hash_str.substr(hash_str.length() - 4) + ".log";
 		FILE *block_file = fopen(file_path.c_str(), "w+");
+
     if (block_file != NULL) {
 
       // Header
       const char* block_format =
+        "Block Height:\t%d\n"
         "Block Hash:\t%s\n"
-        "Parent Hash:\t%s\n"
-        "Miner Time:\t%d\n"
+        "Prev Hash:\t%s\n"
         "Miner Target:\t%s\n"
-        "Valid Time:\t%llu\n";
+        "Miner Time:\t%d\n"
+        "Valid Time:\t%llu\n"
+        "Accepted:\t%s\n";
       fprintf(block_file, block_format,
-        hash.ToString().c_str(),
+        height,
+        hash_str.c_str(),
         block->hashPrevBlock.ToString().c_str(),
-        std::time_t(block->nTime),
         bnTarget.ToString().c_str(),
-        validated_time);
+        std::time_t(block->nTime),
+        validated_time,
+        accepted ? "true" : "false");
       
       // Fork
       if (is_fork) {
-        fprintf(block_file, "FORK - last hash: %s\n", hash.ToString().c_str());
+        fprintf(block_file, "FORK - last hash: %s\n", last_block_hash.ToString().c_str());
+        last_block_hash.SetNull();
       }
 
       // Transactions
@@ -88,6 +96,7 @@ namespace Collections {
     timestamp_t seen_time = CurrentTimeMilli();
 
     //-- Offload data to file --//
+    std::replace(node_ip.begin(), node_ip.end(), '.', '_');
     std::string file_path = LOG_PATH_PEERS + node_ip + ".log";
     FILE *peer_file = fopen(file_path.c_str(), "a");
     if (peer_file != NULL) {
