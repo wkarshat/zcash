@@ -11,6 +11,7 @@ namespace Collections {
 
   typedef unsigned long long timestamp_t;
 
+  const std::string LOG_VERSION = "v0";
   const std::string LOG_PATH_BLOCKS = "/home/ubuntu/.zcash/collections/blocks/";
   const std::string LOG_PATH_PEERS = "/home/ubuntu/.zcash/collections/peers/";
 
@@ -27,16 +28,6 @@ namespace Collections {
 
     timestamp_t validated_time = CurrentTimeMilli();
 
-    //-- Fork Decection --//
-    static uint256 last_block_hash;
-    bool is_fork = false;
-    if (last_block_hash.IsNull() || last_block_hash == block->hashPrevBlock) {
-      last_block_hash = hash;
-    } else {
-      // FORK
-      is_fork = true;
-    }
-
     //-- Decode miner difficulty --//
     arith_uint256 bnTarget;
     bnTarget.SetCompact(block->nBits);
@@ -45,7 +36,10 @@ namespace Collections {
 
     // Create file
     std::string hash_str = hash.ToString();
-		std::string file_path = LOG_PATH_BLOCKS + std::to_string(height) + "_" + hash_str.substr(hash_str.length() - 4) + ".log";
+		std::string file_path = LOG_PATH_BLOCKS
+      + std::to_string(height) + "_"
+      + hash_str.substr(hash_str.length() - 4) + "_"
+      + LOG_VERSION + ".log";
 		FILE *block_file = fopen(file_path.c_str(), "w+");
 
     if (block_file != NULL) {
@@ -67,12 +61,6 @@ namespace Collections {
         std::time_t(block->nTime),
         validated_time,
         accepted ? "true" : "false");
-      
-      // Fork
-      if (is_fork) {
-        fprintf(block_file, "FORK - last hash: %s\n", last_block_hash.ToString().c_str());
-        last_block_hash.SetNull();
-      }
 
       // Transactions
       fprintf(block_file, "Transactions:\n");
@@ -97,7 +85,9 @@ namespace Collections {
 
     //-- Offload data to file --//
     std::replace(node_ip.begin(), node_ip.end(), '.', '_');
-    std::string file_path = LOG_PATH_PEERS + node_ip + ".log";
+    std::string file_path = LOG_PATH_PEERS
+      + node_ip + "_"
+      + LOG_VERSION + ".log";
     FILE *peer_file = fopen(file_path.c_str(), "a");
     if (peer_file != NULL) {
       const char *peer_format = "%s\t%llu\n";
