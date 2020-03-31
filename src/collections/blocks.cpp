@@ -12,8 +12,8 @@ namespace Collections {
   typedef unsigned long long timestamp_t;
 
   const std::string LOG_VERSION = "v0";
-  const std::string LOG_PATH_BLOCKS = "/home/ubuntu/.zcash/collections/blocks/";
-  const std::string LOG_PATH_PEERS = "/home/ubuntu/.zcash/collections/peers/";
+  const std::string LOG_PATH_BLOCKS = "/collections/blocks/";
+  const std::string LOG_PATH_PEERS = "/collections/peers/";
 
   // get current time in milliseconds since epoch
   static timestamp_t CurrentTimeMilli() {
@@ -25,7 +25,6 @@ namespace Collections {
 
   // main.cpp:5973
   void BlockAdd(const CBlock* block, const uint256 hash, const int height, const bool accepted) {
-
     timestamp_t validated_time = CurrentTimeMilli();
 
     //-- Decode miner difficulty --//
@@ -36,7 +35,7 @@ namespace Collections {
 
     // Create file
     std::string hash_str = hash.ToString();
-		std::string file_path = LOG_PATH_BLOCKS
+		std::string file_path = GetDataDir(false).string() + LOG_PATH_BLOCKS
       + std::to_string(height) + "_"
       + hash_str.substr(hash_str.length() - 4) + "_"
       + LOG_VERSION + ".log";
@@ -85,7 +84,7 @@ namespace Collections {
 
     //-- Offload data to file --//
     std::replace(node_ip.begin(), node_ip.end(), '.', '_');
-    std::string file_path = LOG_PATH_PEERS
+    std::string file_path = GetDataDir(false).string() + LOG_PATH_PEERS
       + node_ip + "_"
       + LOG_VERSION + ".log";
     FILE *peer_file = fopen(file_path.c_str(), "a");
