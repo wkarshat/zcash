@@ -5606,7 +5606,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             pfrom->AddInventoryKnown(inv);
 
             //-- PEER INV COLLECTION --//
-            Collections::PeerInvSeen(inv.hash, pfrom->addr.ToStringIP());
+            Collections::InvAdd(inv.hash, pfrom->addr.ToStringIP());
 
             bool fAlreadyHave = AlreadyHave(inv);
             LogPrint("net", "got inv: %s  %s peer=%d\n", inv.ToString(), fAlreadyHave ? "have" : "new", pfrom->id);

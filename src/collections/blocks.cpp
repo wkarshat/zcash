@@ -13,7 +13,7 @@ namespace Collections {
 
   const std::string LOG_VERSION = "v0";
   const std::string LOG_PATH_BLOCKS = "/collections/blocks/";
-  const std::string LOG_PATH_PEERS = "/collections/peers/";
+  const std::string LOG_PATH_INV = "/collections/inv/";
 
   // get current time in milliseconds since epoch
   static timestamp_t CurrentTimeMilli() {
@@ -78,24 +78,24 @@ namespace Collections {
 
   // main.cpp:5609
   // Blocks and Transactions
-  void PeerInvSeen(uint256 hash, std::string node_ip) {
+  void InvAdd(uint256 hash, std::string node_ip) {
     //-- Timestamp --//
     timestamp_t seen_time = CurrentTimeMilli();
 
     //-- Offload data to file --//
     std::replace(node_ip.begin(), node_ip.end(), '.', '_');
-    std::string file_path = GetDataDir(false).string() + LOG_PATH_PEERS
+    std::string file_path = GetDataDir(false).string() + LOG_PATH_INV
       + node_ip + "_"
       + LOG_VERSION + ".log";
-    FILE *peer_file = fopen(file_path.c_str(), "a");
-    if (peer_file != NULL) {
-      const char *peer_format = "%s\t%llu\n";
+    FILE *inv_file = fopen(file_path.c_str(), "a");
+    if (inv_file != NULL) {
+      const char *inv_format = "%s\t%llu\n";
 
-      fprintf(peer_file, peer_format, hash.ToString().c_str(), seen_time);
-      fclose(peer_file);
+      fprintf(inv_file, inv_format, hash.ToString().c_str(), seen_time);
+      fclose(inv_file);
     } else {
       // TODO better error handler here
-      std::cout << "ERROR: could not open peer file" << file_path << "\n";
+      std::cout << "ERROR: could not open inv file" << file_path << "\n";
     }
   }
 }
