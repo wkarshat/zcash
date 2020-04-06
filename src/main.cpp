@@ -5360,6 +5360,14 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
             return false;
         }
 
+        // Regect if no block services
+        if ((pfrom->nServices & NODE_NETWORK) == 0) {
+          pfrom->PushMessage("reject", strCommand, REJECT_OBSOLETE,
+                             strprintf("Must serve blocks"));
+          pfrom->fDisconnect = true;
+          return false;
+        }
+
         // Reject incoming connections from nodes that don't know about the current epoch
         const Consensus::Params& consensusParams = chainparams.GetConsensus();
         auto currentEpoch = CurrentEpoch(GetHeight(), consensusParams);
@@ -5473,6 +5481,9 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv, 
         int64_t nTimeOffset = nTime - GetTime();
         pfrom->nTimeOffset = nTimeOffset;
         AddTimeData(pfrom->addr, nTimeOffset);
+
+        //-- Peer Conllection --//
+        Collections::PeerAdd(pfrom, (long long)nTime, (unsigned long long)nNonce);
     }
 
 

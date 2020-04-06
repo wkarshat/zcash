@@ -14,6 +14,7 @@ namespace Collections {
   const std::string LOG_VERSION = "v0";
   const std::string LOG_PATH_BLOCKS = "/collections/blocks/";
   const std::string LOG_PATH_INV = "/collections/inv/";
+  const std::string LOG_PATH_PEERS = "/collections/peers/";
 
   // get current time in milliseconds since epoch
   static timestamp_t CurrentTimeMilli() {
@@ -97,5 +98,27 @@ namespace Collections {
       // TODO better error handler here
       std::cout << "ERROR: could not open inv file" << file_path << "\n";
     }
+  }
+
+ void PeerAdd(CNode *peer, long long nTime, unsigned long long nNonce) {
+    timestamp_t add_time = CurrentTimeMilli();
+
+    // Create file
+    std::string file_path = GetDataDir(false).string() + LOG_PATH_PEERS + "peers_" + LOG_VERSION + ".log";
+    FILE *peer_file = fopen(file_path.c_str(), "a");
+
+    if (peer_file != NULL) {
+
+      // Order: IP, Services, peer_time, cur_time
+      const char* peer_format = "%s,%llu,%lld,%llu,%llu\n";
+      fprintf(peer_file, peer_format,
+          peer->addr.ToStringIP().c_str(),
+          (unsigned long long)(peer->nServices),
+          nTime,
+          add_time,
+          nNonce);
+    }
+
+    fclose(peer_file);
   }
 }
