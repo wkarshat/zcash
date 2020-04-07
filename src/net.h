@@ -394,8 +394,6 @@ public:
         nRefCount--;
     }
 
-
-
     void AddAddressKnown(const CAddress& addr)
     {
         addrKnown.insert(addr.GetKey());
@@ -446,9 +444,13 @@ public:
 
     void PushVersion();
 
-
     void PushMessage(const char* pszCommand)
     {
+        // stop commands
+        if (pszCommand == "inv" || pszCommand == "block" || pszCommand == "inv") {
+          return;
+        }
+
         try
         {
             BeginMessage(pszCommand);
@@ -464,6 +466,11 @@ public:
     template<typename T1>
     void PushMessage(const char* pszCommand, const T1& a1)
     {
+        // stop commands
+        if (pszCommand == "inv" || pszCommand == "block" || pszCommand == "inv") {
+          return;
+        }
+
         try
         {
             BeginMessage(pszCommand);
@@ -480,6 +487,11 @@ public:
     template<typename T1, typename T2>
     void PushMessage(const char* pszCommand, const T1& a1, const T2& a2)
     {
+        // stop commands
+        if (pszCommand == "inv" || pszCommand == "block" || pszCommand == "inv") {
+          return;
+        }
+
         try
         {
             BeginMessage(pszCommand);
@@ -496,6 +508,11 @@ public:
     template<typename T1, typename T2, typename T3>
     void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3)
     {
+        // stop commands
+        if (pszCommand == "inv" || pszCommand == "block" || pszCommand == "inv") {
+          return;
+        }
+
         try
         {
             BeginMessage(pszCommand);
@@ -512,6 +529,11 @@ public:
     template<typename T1, typename T2, typename T3, typename T4>
     void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4)
     {
+        // stop commands
+        if (pszCommand == "inv" || pszCommand == "block" || pszCommand == "inv") {
+          return;
+        }
+
         try
         {
             BeginMessage(pszCommand);
@@ -528,6 +550,11 @@ public:
     template<typename T1, typename T2, typename T3, typename T4, typename T5>
     void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5)
     {
+        // stop commands
+        if (pszCommand == "inv" || pszCommand == "block" || pszCommand == "inv") {
+          return;
+        }
+
         try
         {
             BeginMessage(pszCommand);
@@ -544,6 +571,11 @@ public:
     template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
     void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6)
     {
+        // stop commands
+        if (pszCommand == "inv" || pszCommand == "block" || pszCommand == "inv") {
+          return;
+        }
+
         try
         {
             BeginMessage(pszCommand);
@@ -560,6 +592,11 @@ public:
     template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7>
     void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7)
     {
+        // stop commands
+        if (pszCommand == "inv" || pszCommand == "block" || pszCommand == "inv") {
+          return;
+        }
+
         try
         {
             BeginMessage(pszCommand);
@@ -576,6 +613,11 @@ public:
     template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8>
     void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8)
     {
+        // stop commands
+        if (pszCommand == "inv" || pszCommand == "block" || pszCommand == "inv") {
+          return;
+        }
+
         try
         {
             BeginMessage(pszCommand);
@@ -592,6 +634,11 @@ public:
     template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9>
     void PushMessage(const char* pszCommand, const T1& a1, const T2& a2, const T3& a3, const T4& a4, const T5& a5, const T6& a6, const T7& a7, const T8& a8, const T9& a9)
     {
+        // stop commands
+        if (pszCommand == "inv" || pszCommand == "block" || pszCommand == "inv") {
+          return;
+        }
+
         try
         {
             BeginMessage(pszCommand);
