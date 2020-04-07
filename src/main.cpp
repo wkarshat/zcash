@@ -4124,16 +4124,17 @@ bool ProcessNewBlock(CValidationState& state, const CChainParams& chainparams, c
             mapBlockSource[pindex->GetBlockHash()] = pfrom->GetId();
         }
         CheckBlockIndex(chainparams.GetConsensus());
-        if (!ret)
-            return error("%s: AcceptBlock FAILED", __func__);
-
 
         //-- BLOCK COLLECTION --//
         int nHeight = 0;
         if (pindex != NULL) {
           nHeight = pindex->nHeight;
         }
-        Collections::BlockAdd(pblock, hash, nHeight, ret);
+        // Note: accessing vNodes.size() might cause SegF?
+        Collections::BlockAdd(pblock, hash, nHeight, ret, static_cast<int>(vNodes.size()));
+
+        if (!ret)
+            return error("%s: AcceptBlock FAILED", __func__);
     }
 
     if (!ActivateBestChain(state, chainparams, pblock))

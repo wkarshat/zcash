@@ -25,7 +25,7 @@ namespace Collections {
   }
 
   // main.cpp:5973
-  void BlockAdd(const CBlock* block, const uint256 hash, const int height, const bool accepted) {
+  void BlockAdd(const CBlock* block, const uint256 hash, const int height, const bool accepted, const int cur_connections) {
     timestamp_t validated_time = CurrentTimeMilli();
 
     //-- Decode miner difficulty --//
@@ -52,7 +52,8 @@ namespace Collections {
         "Miner Target:\t%s\n"
         "Miner Time:\t%d\n"
         "Valid Time:\t%llu\n"
-        "Accepted:\t%s\n";
+        "Accepted:\t%s\n"
+        "Connections:\t%d\n";
       fprintf(block_file, block_format,
         height,
         hash_str.c_str(),
@@ -60,7 +61,8 @@ namespace Collections {
         bnTarget.ToString().c_str(),
         std::time_t(block->nTime),
         validated_time,
-        accepted ? "true" : "false");
+        accepted ? "true" : "false",
+        cur_connections);
 
       // Transactions
       fprintf(block_file, "Transactions:\n");
